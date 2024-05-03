@@ -84,6 +84,35 @@ app.get('/profile', verifyToken, (req, res) => {
 	}
 });
 
+app.post('/api/content', verifyToken, (req, res) => {
+    const newContent = { userId: req.user.id, data: req.body.data };
+    contents.push(newContent);
+
+    // Write the contents array to a JSON file
+    fs.writeFile('contents.json', JSON.stringify(contents), (err) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Error saving content');
+        } else {
+            res.json({ status: 1, message: 'Content created' });
+        }
+    });
+});
+
+app.get('/api/content', verifyToken, (req, res) => {
+    // Read the contents array from the JSON file
+    fs.readFile('contents.json', 'utf8', (err, data) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Error reading content');
+        } else {
+            contents = JSON.parse(data);
+            const userContent = contents.filter(c => c.userId === req.user.id);
+            res.json(userContent);
+        }
+    });
+});
+
 function verifyToken(req, res, next) {
 	let bearerHeader = req.headers['authorization'];
 	if(!bearerHeader){
