@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JWT Example</title>
+</head>
+<body>
+	<div id="profile">
+		<!-- Profile information will be displayed here after successful login and profile fetch -->
+	</div>
+    <div>
+        <input type="email" id="email" placeholder="Email"><br />
+        <input type="password" id="password" placeholder="Password"><br />
+        <button id="login">Login</button>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+		document.getElementById('login').addEventListener('click', function() {
+			const email = document.getElementById('email').value;
+			const password = document.getElementById('password').value;
+			
+			axios.post('http://localhost:3000/api/auth/login', { email, password }).then(response => {
+				console.log('Logged in successfully:', response.data.jwt);
+				localStorage.setItem('token', response.data.jwt);
+				alert('you are logged in!');
+			}).catch(error => console.error('Error logging in:', error));
+		});
+	</script>
+</body>
+</html>
